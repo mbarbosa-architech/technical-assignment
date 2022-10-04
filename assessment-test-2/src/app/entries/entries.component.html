@@ -1,0 +1,15 @@
+<div>
+  <div *ngFor="let entry of jsonFromData" class="entry-container">
+    <div class="entry-row">
+      <div class="entry-title-row">
+        <a href="entry.url" class="text-title-5">{{ entry.title }}</a>
+        <span class="category">
+          {{ getCategories(entry.category) }}
+        </span>
+      </div>
+      <p class="description">
+        {{ entry.description }}
+      </p>
+    </div>
+  </div>
+</div>

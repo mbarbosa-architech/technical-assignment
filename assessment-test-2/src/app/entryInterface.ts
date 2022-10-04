@@ -7,6 +7,5 @@ export interface IEntry {
     isNoIndex: boolean;
     title: string;
   }
-  template: any;
   url: string;
 }
