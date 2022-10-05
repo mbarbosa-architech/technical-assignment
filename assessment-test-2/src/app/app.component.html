@@ -15,7 +15,7 @@
 
   .content {
     display: flex;
-    margin: 40px;
+    margin: 100px 40px 40px;
     padding: 0 16px;
     flex-direction: column;
     align-items: center;
@@ -26,10 +26,14 @@
   }
 
   footer {
-    margin-top: 8px;
+    border-top: solid 2px #ccc;
+    width: 100%;
+    margin-top: 16px;
     display: flex;
     align-items: center;
+    justify-content: center;
     line-height: 20px;
+    padding-top: 16px;
   }
 </style>
 
@@ -40,24 +44,7 @@
 
 <!-- Content -->
 <div class="content" role="main">
-  <ol>
-    <li>
-      <p>Rest API Call output (URL, SEO title, descriptions and isNoIndex):</p>
-      <div *ngFor="let entry of entries">
-        <p>URL: {{ entry.url }}</p>
-        <p>SEO:</p>
-        <ul>
-          <li>title: {{ entry.seo.title }}</li>
-          <li>description: {{ entry.seo.description }}</li>
-          <li>isNoIndex: {{ entry.seo.isNoIndex }}</li>
-        </ul>
-      </div>
-    </li>
-    <li>
-      <p>GraphQl query entries</p>
-      <app-entries></app-entries>
-    </li>
-  </ol>
+  <app-entries></app-entries>
   <!-- Footer -->
   <footer>Author: Maria Leticia Leoncio Barbosa</footer>
 </div>

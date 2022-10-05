@@ -1,10 +1,28 @@
 <div>
-  <div *ngFor="let entry of jsonFromData" class="entry-container">
+  <!-- Filter input -->
+  <div>
+    <label for="filter-title" class="filter-label">Filter by title: </label>
+    <input
+      id="filter-title"
+      type="search"
+      [(ngModel)]="titleInput"
+      class="filter"
+    />
+  </div>
+  <!-- Entry data -->
+  <div
+    *ngFor="
+      let entry of jsonFromData
+        | filterEntries: titleInput
+        | paginate: { itemsPerPage: 10, currentPage }
+    "
+    class="entry-container"
+  >
     <div class="entry-row">
       <div class="entry-title-row">
-        <a href="entry.url" class="text-title-5">{{ entry.title }}</a>
+        <a href="{{ entry.url }}" class="text-title-5">{{ entry.title }}</a>
         <span class="category">
-          {{ getCategories(entry.category) }}
+          {{ getCategoriesValues(entry.category) }}
         </span>
       </div>
       <p class="description">
@@ -12,4 +30,8 @@
       </p>
     </div>
   </div>
+  <!-- Pagination -->
+  <pagination-controls
+    (pageChange)="currentPage = $event"
+  ></pagination-controls>
 </div>

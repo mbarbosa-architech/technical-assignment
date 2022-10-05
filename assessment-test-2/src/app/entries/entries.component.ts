@@ -13,6 +13,10 @@ export class EntriesComponent implements OnInit, OnDestroy {
   graphQLEntries: any
   jsonFromData: any[] = []
 
+  currentPage: number = 1
+
+  titleInput: string = ''
+
   private querySubscription: Subscription = new Subscription;
 
   constructor(private apollo: Apollo) { }
@@ -42,21 +46,25 @@ export class EntriesComponent implements OnInit, OnDestroy {
           title: result.seo.title.replace('| Rogers', '- Rogers').trim(),
           description: result.seo.description.substring(0, 80),
           isNoIndex: result.seo.isNoIndex || null,
-          category: result.url.replace('/home', '')
-            .replaceAll('-', ' ')
-            .split('/')
-            .reduce((accumulator: any, currentValue: string, index: number) => {
-              return index > 2 ? accumulator : {
-                ...accumulator,
-                [index]: currentValue.charAt(0).toUpperCase() + currentValue.slice(1)
-              }
-            })
+          category: this.extractCategoryFromURL(result.url)
         }
       })
     }
   }
 
-  getCategories(categoryMap: any) {
+  extractCategoryFromURL(url: string) {
+    return url.replace('/home', '')
+      .replaceAll('-', ' ')
+      .split('/')
+      .reduce((accumulator: any, currentValue: string, index: number) => {
+        return index > 2 ? accumulator : {
+          ...accumulator,
+          [index]: currentValue.charAt(0).toUpperCase() + currentValue.slice(1)
+        }
+      })
+  }
+
+  getCategoriesValues(categoryMap: any) {
     return Object.values(categoryMap).join(' - ')
   }
 
