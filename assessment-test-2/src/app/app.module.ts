@@ -8,13 +8,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { GraphQLModule } from './graphql.module';
 import { EntriesComponent } from './entries/entries.component';
-import { FilterEntriesPipe } from './filter/filter-entries.pipe'
 
 @NgModule({
   declarations: [
     AppComponent,
-    EntriesComponent,
-    FilterEntriesPipe
+    EntriesComponent
   ],
   imports: [
     BrowserModule,

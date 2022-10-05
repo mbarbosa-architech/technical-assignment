@@ -35,7 +35,6 @@ export class EntryService {
 
   extractCategoryFromURL(url: string) {
     return url.replace(Config.HOME_PATH_URL, '')
-      .replaceAll(Config.CATEGORY_WORD_SEPARATOR, ' ')
       .split(Config.CATEGORY_SEPARATOR)
       .reduce((accumulator: any, currentValue: string, index: number) => {
         return index > Config.TOTAL_CATEGORIES ? accumulator : {

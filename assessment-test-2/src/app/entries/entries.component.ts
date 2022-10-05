@@ -13,6 +13,7 @@ export class EntriesComponent implements OnInit {
   graphQLEntries: any = {}
   currentPage: number = Config.DEFAULT_PAGE_NUMBER
   titleInput: string = ''
+  itemsPerPage: number = Config.ITEMS_PER_PAGE
 
   constructor(private entryService: EntryService) { }
 
@@ -21,7 +22,7 @@ export class EntriesComponent implements OnInit {
   }
 
   fetchEntries() {
-    this.entryService.fetchGraphQLEntries({ limit: 10, skip: (this.currentPage - 1) * 10, title: this.titleInput })
+    this.entryService.fetchGraphQLEntries({ limit: this.itemsPerPage, skip: (this.currentPage - 1) * this.itemsPerPage, title: this.titleInput })
       .subscribe(({ data }) => {
         this.graphQLEntries = data.pageTemplateCollection
         this.jsonFromData = this.entryService.contentToJson(this.graphQLEntries.items)
@@ -30,5 +31,10 @@ export class EntriesComponent implements OnInit {
 
   getCategoriesValues(categoryMap: any) {
     return Object.values(categoryMap).join(` ${Config.CATEGORY_WORD_SEPARATOR} `)
+  }
+
+  changePage(pageNumber: number) {
+    this.currentPage = pageNumber
+    this.fetchEntries()
   }
 }

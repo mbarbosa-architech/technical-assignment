@@ -15,7 +15,11 @@
     *ngFor="
       let entry of jsonFromData
         | paginate
-          : { itemsPerPage: 10, currentPage, totalItems: graphQLEntries.total }
+          : {
+              itemsPerPage,
+              currentPage,
+              totalItems: graphQLEntries.total
+            }
     "
     class="entry-container"
   >
@@ -32,7 +36,5 @@
     </div>
   </div>
   <!-- Pagination -->
-  <pagination-controls
-    (pageChange)="currentPage = $event"
-  ></pagination-controls>
+  <pagination-controls (pageChange)="changePage($event)"></pagination-controls>
 </div>
