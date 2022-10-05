@@ -7,14 +7,15 @@
       type="search"
       [(ngModel)]="titleInput"
       class="filter"
+      (ngModelChange)="fetchEntries()"
     />
   </div>
   <!-- Entry data -->
   <div
     *ngFor="
       let entry of jsonFromData
-        | filterEntries: titleInput
-        | paginate: { itemsPerPage: 10, currentPage }
+        | paginate
+          : { itemsPerPage: 10, currentPage, totalItems: graphQLEntries.total }
     "
     class="entry-container"
   >

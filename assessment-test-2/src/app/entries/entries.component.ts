@@ -1,72 +1,34 @@
-import { Config } from './../config/config';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Apollo } from 'apollo-angular';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 
-import { GET_ENTRY } from './../graphql/graphql.queries';
+import { Config } from './../config/config';
+import { EntryService } from '../entry.service';
 
 @Component({
   selector: 'app-entries',
   templateUrl: './entries.component.html',
   styleUrls: ['./entries.component.css']
 })
-export class EntriesComponent implements OnInit, OnDestroy {
-  graphQLEntries: any
+export class EntriesComponent implements OnInit {
   jsonFromData: any[] = []
-
+  graphQLEntries: any = {}
   currentPage: number = Config.DEFAULT_PAGE_NUMBER
-
   titleInput: string = ''
 
-  private querySubscription: Subscription = new Subscription;
-
-  constructor(private apollo: Apollo) { }
+  constructor(private entryService: EntryService) { }
 
   ngOnInit(): void {
-    this.fetchGraphQLEntries()
+    this.fetchEntries()
   }
 
-  ngOnDestroy() {
-    this.querySubscription.unsubscribe();
-  }
-
-  fetchGraphQLEntries() {
-    this.querySubscription = this.apollo.watchQuery<any>({
-      query: GET_ENTRY
-    }).valueChanges.subscribe(({ data }) => {
-      this.graphQLEntries = data.pageTemplateCollection.items
-      this.contentToJson(this.graphQLEntries)
-    });
-  }
-
-  contentToJson(data: any) {
-    if (data) {
-      this.jsonFromData = data.map((result: any) => {
-        return {
-          url: `${Config.BASE_URL}${result.url.replace(Config.HOME_PATH_URL, '')}`,
-          title: result.seo.title.replace(Config.TITLE_REPLACE.FROM, Config.TITLE_REPLACE.TO).trim(),
-          description: result.seo.description.substring(0, Config.DESC_SIZE),
-          isNoIndex: result.seo.isNoIndex || null,
-          category: this.extractCategoryFromURL(result.url)
-        }
-      })
-    }
-  }
-
-  extractCategoryFromURL(url: string) {
-    return url.replace(Config.HOME_PATH_URL, '')
-      .replaceAll(Config.CATEGORY_WORD_SEPARATOR, ' ')
-      .split(Config.CATEGORY_SEPARATOR)
-      .reduce((accumulator: any, currentValue: string, index: number) => {
-        return index > Config.TOTAL_CATEGORIES ? accumulator : {
-          ...accumulator,
-          [index]: currentValue.charAt(0).toUpperCase() + currentValue.slice(1)
-        }
-      })
+  fetchEntries() {
+    this.entryService.fetchGraphQLEntries({ limit: 10, skip: (this.currentPage - 1) * 10, title: this.titleInput })
+      .subscribe(({ data }) => {
+        this.graphQLEntries = data.pageTemplateCollection
+        this.jsonFromData = this.entryService.contentToJson(this.graphQLEntries.items)
+      });
   }
 
   getCategoriesValues(categoryMap: any) {
     return Object.values(categoryMap).join(` ${Config.CATEGORY_WORD_SEPARATOR} `)
   }
-
 }
