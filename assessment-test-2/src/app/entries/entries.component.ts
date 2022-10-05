@@ -1,3 +1,4 @@
+import { Config } from './../config/config';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Subscription } from 'rxjs';
@@ -13,7 +14,7 @@ export class EntriesComponent implements OnInit, OnDestroy {
   graphQLEntries: any
   jsonFromData: any[] = []
 
-  currentPage: number = 1
+  currentPage: number = Config.DEFAULT_PAGE_NUMBER
 
   titleInput: string = ''
 
@@ -42,9 +43,9 @@ export class EntriesComponent implements OnInit, OnDestroy {
     if (data) {
       this.jsonFromData = data.map((result: any) => {
         return {
-          url: `https://www.rogers.com${result.url.replace('/home', '')}`,
-          title: result.seo.title.replace('| Rogers', '- Rogers').trim(),
-          description: result.seo.description.substring(0, 80),
+          url: `${Config.BASE_URL}${result.url.replace(Config.HOME_PATH_URL, '')}`,
+          title: result.seo.title.replace(Config.TITLE_REPLACE.FROM, Config.TITLE_REPLACE.TO).trim(),
+          description: result.seo.description.substring(0, Config.DESC_SIZE),
           isNoIndex: result.seo.isNoIndex || null,
           category: this.extractCategoryFromURL(result.url)
         }
@@ -53,11 +54,11 @@ export class EntriesComponent implements OnInit, OnDestroy {
   }
 
   extractCategoryFromURL(url: string) {
-    return url.replace('/home', '')
-      .replaceAll('-', ' ')
-      .split('/')
+    return url.replace(Config.HOME_PATH_URL, '')
+      .replaceAll(Config.CATEGORY_WORD_SEPARATOR, ' ')
+      .split(Config.CATEGORY_SEPARATOR)
       .reduce((accumulator: any, currentValue: string, index: number) => {
-        return index > 2 ? accumulator : {
+        return index > Config.TOTAL_CATEGORIES ? accumulator : {
           ...accumulator,
           [index]: currentValue.charAt(0).toUpperCase() + currentValue.slice(1)
         }
@@ -65,7 +66,7 @@ export class EntriesComponent implements OnInit, OnDestroy {
   }
 
   getCategoriesValues(categoryMap: any) {
-    return Object.values(categoryMap).join(' - ')
+    return Object.values(categoryMap).join(` ${Config.CATEGORY_WORD_SEPARATOR} `)
   }
 
 }
