@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { IEntry } from './entryInterface';
+import { Entry, Metadata } from './entries/entry';
 import { Config } from './config/config';
 
 @Component({
@@ -13,9 +13,9 @@ export class AppComponent {
   title = 'Technical Assessment - Test 2';
   apiURL = Config.API_URL
 
-  entries: IEntry[] = []
-  items: any = []
-  includes: any = []
+  entries: Entry[] = []
+  items: Metadata[] = []
+  includes: Record<string, Metadata[]> = {}
 
   constructor(private http: HttpClient) {
     this.fetchRestAPIEntries()
@@ -25,20 +25,20 @@ export class AppComponent {
    * Fetch Entries using REST API call
    */
   fetchRestAPIEntries() {
-    this.getConfig().subscribe((data: any) => {
+    this.getConfig().subscribe((data) => {
       this.items = data.items
       this.includes = data.includes
 
-      this.items.forEach((item: any) => {
-        const seo: any = this.includes[item.sys.type].find((include: any) => item.fields.seo.sys.id === include.sys.id);
-        const template: any = this.includes[item.sys.type].find((include: any) => item.fields.template.sys.id === include.sys.id);
+      this.items.forEach((item: Metadata) => {
+        const seo = this.includes[item.sys['type']].find((include) => item.fields['seo'].sys.id === include.sys['id']);
+        const template = this.includes[item.sys['type']].find((include) => item.fields['template'].sys.id === include.sys['id']);
 
         const entry = { ...item.fields }
 
-        entry.seo = seo ? seo.fields : null
-        entry.template = template ? template.fields : null
+        entry['seo'] = seo ? seo.fields : null
+        entry['template'] = template ? template.fields : null
 
-        this.entries.push(entry)
+        this.entries.push(entry as Entry)
       });
     })
   }

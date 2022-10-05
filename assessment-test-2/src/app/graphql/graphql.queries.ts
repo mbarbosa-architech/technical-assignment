@@ -1,9 +1,5 @@
 import { gql } from 'apollo-angular'
 
-type Response = {
-  pageTemplateCollection: any;
-};
-
 /**
  * Equivalent GraphQL query for the REST API call:
  * curl -i -X GET \
